@@ -1,7 +1,17 @@
 package act3.app.com.evidencia1act4_android.Models;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.ArrayList;
+
+import act3.app.com.evidencia1act4_android.database.dbCurp;
+import act3.app.com.evidencia1act4_android.database.dbCurpHelper;
+
 
 public class Cliente_CURP implements Parcelable {
     private String codigo;
@@ -147,6 +157,78 @@ public class Cliente_CURP implements Parcelable {
 
         return (ch1+""+ch2+""+ch3+""+ch4+""+ch5+""+ch6+""+ch7+""+ch8+""+ch9+""+ch10);
     }
+    public void saveCURP (Context context) {
+        dbCurpHelper dbCurphelper = new dbCurpHelper(context);
+        SQLiteDatabase database = dbCurphelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_NOMBRE, nombre);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_APELLIDOP, apellidop);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_APELLIDOM, apellidom);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_SEXO, sexo);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAD, fechanD);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAM, fechanM);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAA, fechanA);
+        values.put(dbCurp.CreateCURP.COLUMN_PERSONA_ENTIDADF, entidadf);
 
+        if(this.id ==0){
+            Long id = database.insert(dbCurp.CreateCURP.TABLE_NAME, dbCurp.CreateCURP._ID, values);
+            this.id = id;
+        }else{
+            String[] selectionArgs = {
+                    String.valueOf(this.id);
+                    database.update(dbCurp.CreateCURP.TABLE_NAME, values, dbCurp.CreateCURP._ID + " = ? ", selectionArgs);
+            }
+        }
+        public static ArrayList<CURP> getCurps(Context context){
+            String[] args = {};
+            return getCurps(context, "", args, dbCurp.CreateCURP._ID + "ASC");
+        }
+        public static ArrayList<CURP> getCurps(Context context, String selection, String[] selectionArgs){
+            return getCurps(context, selection, selectionArgs, dbCurp.CreateCURP._ID + "ASC");
+        }
+        public static ArrayList<CURP> getCurps(Context context, String selection, String[] selectionArgs, String sortOrder){
+            dbCurpHelper dbCurphelper = new dbCurpHelper(context);
+            SQLiteDatabase database = dbCurpHelper.getWriteDatabase();
+
+            String[] projection = {
+                    dbCurp.CreateCURP._ID,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_NOMBRE,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_APELLIDOP,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_APELLIDOM,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_SEXO,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_FECHAD,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_FECHAM,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_FECHAA,
+                    dbCurp.CreateCURP.COLUMN_PERSONA_ENTIDADF
+            };
+            Cursor cursor = database.query(
+                    dbCurp.CreateCURP.TABLE_NAME,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    sortOrder
+            );
+            ArrayList<CURP> items = new ArrayList<>();
+            while (cursor.moveToNext()){
+                long curp_ID = cursor.getLong(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP._ID));
+                String curp_nombre = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_NOMBRE));
+                String curp_apellidop = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_APELLIDOP));
+                String curp_apellidom = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_APELLIDOM));
+                String curp_sexo = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_SEXO));
+                int curp_fechad = cursor.getInt(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAD));
+                int curp_fecham = cursor.getInt(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAM));
+                int curp_fechaa = cursor.getInt(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAA));
+                String curp_entidadf = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_ENTIDADF));
+
+                CURP curp = new CURP(curp_nombre, curp_apellidop, curp_apellidom, curp_sexo, curp_fechad, curp_fecham, curp_fechaa, curp_entidadf, curp_ID);
+                items.add(curp);
+            }
+            cursor.close();
+            return items;
+
+        }
+    }
 
 }
