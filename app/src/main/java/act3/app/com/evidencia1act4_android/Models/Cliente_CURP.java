@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import act3.app.com.evidencia1act4_android.database.dbCurp;
@@ -179,14 +180,23 @@ public class Cliente_CURP implements Parcelable {
                     database.update(dbCurp.CreateCURP.TABLE_NAME, values, dbCurp.CreateCURP._ID + " = ? ", selectionArgs);
             }
         }
-        public static ArrayList<CURP> getCurps(Context context){
+        public void save(Context context){
+            SaveDatabase saveDatabase = new SaveDatabase(context);
+            new SaveDatabase().execute(saveDatabase);
+        }
+        public static ArrayList<Cliente_CURP> getCurps(Context context){
+            SelectDatabase databaseS = new SelectDatabase(context);
+            ArrayList<Cliente_CURP> curps = new getCurpsDatabase().inDatabase(databaseS);
+            retur curps;
+        }
+        public static ArrayList<Cliente_CURP> getCurps(Context context){
             String[] args = {};
             return getCurps(context, "", args, dbCurp.CreateCURP._ID + "ASC");
         }
-        public static ArrayList<CURP> getCurps(Context context, String selection, String[] selectionArgs){
+        public static ArrayList<Cliente_CURP> getCurps(Context context, String selection, String[] selectionArgs){
             return getCurps(context, selection, selectionArgs, dbCurp.CreateCURP._ID + "ASC");
         }
-        public static ArrayList<CURP> getCurps(Context context, String selection, String[] selectionArgs, String sortOrder){
+        public static ArrayList<Cliente_CURP> getCurps(Context context, String selection, String[] selectionArgs, String sortOrder){
             dbCurpHelper dbCurphelper = new dbCurpHelper(context);
             SQLiteDatabase database = dbCurpHelper.getWriteDatabase();
 
@@ -201,7 +211,7 @@ public class Cliente_CURP implements Parcelable {
                     dbCurp.CreateCURP.COLUMN_PERSONA_FECHAA,
                     dbCurp.CreateCURP.COLUMN_PERSONA_ENTIDADF
             };
-            Cursor cursor = database.query(
+            Cursor cursor = database.qumery(
                     dbCurp.CreateCURP.TABLE_NAME,
                     projection,
                     selection,
@@ -210,7 +220,7 @@ public class Cliente_CURP implements Parcelable {
                     null,
                     sortOrder
             );
-            ArrayList<CURP> items = new ArrayList<>();
+            ArrayList<Cliente_CURP> items = new ArrayList<>();
             while (cursor.moveToNext()){
                 long curp_ID = cursor.getLong(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP._ID));
                 String curp_nombre = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_NOMBRE));
@@ -222,7 +232,7 @@ public class Cliente_CURP implements Parcelable {
                 int curp_fechaa = cursor.getInt(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_FECHAA));
                 String curp_entidadf = cursor.getString(cursor.getColumnIndexOrThrow(dbCurp.CreateCURP.COLUMN_PERSONA_ENTIDADF));
 
-                CURP curp = new CURP(curp_nombre, curp_apellidop, curp_apellidom, curp_sexo, curp_fechad, curp_fecham, curp_fechaa, curp_entidadf, curp_ID);
+                Cliente_CURP curp = new Cliente_CURP(curp_nombre, curp_apellidop, curp_apellidom, curp_sexo, curp_fechad, curp_fecham, curp_fechaa, curp_entidadf, curp_ID);
                 items.add(curp);
             }
             cursor.close();

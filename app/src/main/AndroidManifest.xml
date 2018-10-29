@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity_CURP" />
-        <activity android:name=".persona_recycler"></activity>
+        <activity android:name=".persona_recycler" />
+        <activity android:name=".lista_persona_curp"></activity>
     </application>
 
 </manifest>
