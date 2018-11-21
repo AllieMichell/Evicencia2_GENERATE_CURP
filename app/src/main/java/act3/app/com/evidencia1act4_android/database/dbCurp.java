@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 public final class dbCurp{
     public static final String SQL_CREATE_DB =
             "CREATE TABLE" + CreateCURP.TABLE_NAME +" (" +
-                    CreateCURP._ID + "Primary key, " +
+                    CreateCURP._ID + "INTEGER PRIMARY KEY, " +
                     CreateCURP.COLUMN_PERSONA_NOMBRE + "TEXT, " +
                     CreateCURP.COLUMN_PERSONA_APELLIDOP + "TEXT, " +
                     CreateCURP.COLUMN_PERSONA_APELLIDOM + "TEXT, " +

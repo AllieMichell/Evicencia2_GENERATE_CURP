@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,21 +12,36 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import act3.app.com.evidencia1act4_android.database.dbCurp;
+import act3.app.com.evidencia1act4_android.database.dbCurp.CreateCURP;
 import act3.app.com.evidencia1act4_android.database.dbCurpHelper;
 
 
 public class Cliente_CURP implements Parcelable {
+    private long id;
     private String codigo;
     private String apellidop;
     private String apellidom;
     private String nombre;
     private String sexo;
-    private String fechanD;
-    private String fechanM;
-    private String fechanA;
+    private int fechanD;
+    private int fechanM;
+    private int fechanA;
     private String entidadf;
 
-    public Cliente_CURP(String codigo, String apellidop, String apellidom, String nombre, String sexo, String fechanD, String fechanM, String fechanA, String entidadf){
+    public Cliente_CURP(){
+        this.id = 0;
+        this.codigo = "";
+        this.apellidop = "";
+        this.apellidom = "";
+        this.nombre = "";
+        this.sexo = "";
+        this.fechanD = 1;
+        this.fechanM = 1;
+        this.fechanA = 1900;
+        this.entidadf = "";
+    }
+
+    public Cliente_CURP(String codigo, String apellidop, String apellidom, String nombre, String sexo, int fechanD, int fechanM, int fechanA, String entidadf){
         this.codigo = codigo;
         this.apellidop = apellidop;
         this.apellidom = apellidom;
@@ -37,6 +53,32 @@ public class Cliente_CURP implements Parcelable {
         this.entidadf = entidadf;
     }
 
+    public Cliente_CURP(String codigo, String apellidop, String apellidom, String nombre, String sexo, int fechanD, int fechanM, int fechanA, String entidadf, long id){
+        this.id = id;
+        this.codigo = codigo;
+        this.apellidop = apellidop;
+        this.apellidom = apellidom;
+        this.nombre = nombre;
+        this.sexo = sexo;
+        this.fechanD = fechanD;
+        this.fechanM = fechanM;
+        this.fechanA = fechanA;
+        this.entidadf = entidadf;
+    }
+
+    protected Cliente_CURP(Parcel in) {
+        codigo = in.readString();
+        apellidop = in.readString();
+        apellidom = in.readString();
+        nombre = in.readString();
+        sexo = in.readString();
+        fechanD = in.readInt();
+        fechanM = in.readInt();
+        fechanA = in.readInt();
+        entidadf = in.readString();
+    }
+
+    public long detId() {return id; }
 
     public String getCodigo() {
         return codigo;
@@ -58,15 +100,15 @@ public class Cliente_CURP implements Parcelable {
         return sexo;
     }
 
-    public String getFechanD() {
+    public int getFechanD() {
         return fechanD;
     }
 
-    public String getFechanM() {
+    public int getFechanM() {
         return fechanM;
     }
 
-    public String getFechanA() {
+    public int getFechanA() {
         return fechanA;
     }
 
@@ -74,17 +116,38 @@ public class Cliente_CURP implements Parcelable {
         return entidadf;
     }
 
-    protected Cliente_CURP(Parcel in) {
-        codigo = in.readString();
-        apellidop = in.readString();
-        apellidom = in.readString();
-        nombre = in.readString();
-        sexo = in.readString();
-        fechanD = in.readString();
-        fechanM = in.readString();
-        fechanA = in.readString();
-        entidadf = in.readString();
+    public void setApellidop (String apellidop){
+        this.apellidop = apellidop;
     }
+
+    public void setApellidom (String apellidom){
+        this.apellidom = apellidom;
+    }
+
+    public void setNombre(String nombre){
+        this.nombre = nombre;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public void setFechanD(int fechanD){
+        this.fechanD = fechanD;
+    }
+
+    public void setFechanM(int fechanM){
+        this.fechanM = fechanM;
+    }
+
+    public void setFechanA(int fechanA){
+        this.fechanA = fechanA;
+    }
+
+    public void setEntidadf(String entidadf){
+        this.entidadf = entidadf;
+    }
+
 
     @Override
     public int describeContents() {
@@ -98,14 +161,17 @@ public class Cliente_CURP implements Parcelable {
         dest.writeString(apellidom);
         dest.writeString(nombre);
         dest.writeString(sexo);
-        dest.writeString(fechanD);
-        dest.writeString(fechanM);
-        dest.writeString(fechanA);
+        dest.writeInt(fechanD);
+        dest.writeInt(fechanM);
+        dest.writeInt(fechanA);
         dest.writeString(entidadf);
     }
 
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<Cliente_CURP> CREATOR = new Parcelable.Creator<Cliente_CURP>() {
+        public Cliente_CURP CreateFormParcel(Parcel in){
+            return new Cliente_CURP(in);
+        }
         @Override
         public Cliente_CURP createFromParcel(Parcel in) {
             return new Cliente_CURP(in);
@@ -158,6 +224,7 @@ public class Cliente_CURP implements Parcelable {
 
         return (ch1+""+ch2+""+ch3+""+ch4+""+ch5+""+ch6+""+ch7+""+ch8+""+ch9+""+ch10);
     }
+
     public void saveCURP (Context context) {
         dbCurpHelper dbCurphelper = new dbCurpHelper(context);
         SQLiteDatabase database = dbCurphelper.getWritableDatabase();
@@ -186,17 +253,103 @@ public class Cliente_CURP implements Parcelable {
         }
         public static ArrayList<Cliente_CURP> getCurps(Context context){
             SelectDatabase databaseS = new SelectDatabase(context);
-            ArrayList<Cliente_CURP> curps = new getCurpsDatabase().inDatabase(databaseS);
-            retur curps;
-        }
-        public static ArrayList<Cliente_CURP> getCurps(Context context){
-            String[] args = {};
-            return getCurps(context, "", args, dbCurp.CreateCURP._ID + "ASC");
+            ArrayList<Cliente_CURP> curps = new getCurpsDatabase().doInBackground(databaseS);
+            return curps;
         }
         public static ArrayList<Cliente_CURP> getCurps(Context context, String selection, String[] selectionArgs){
-            return getCurps(context, selection, selectionArgs, dbCurp.CreateCURP._ID + "ASC");
+            SelectDatabase databaseS = new SelectDatabase(context, selection, selectionArgs);
+            ArrayList<Cliente_CURP> curps = getCurpsDatabase().doInBackground(databaseS);
+            return curps;
         }
-        public static ArrayList<Cliente_CURP> getCurps(Context context, String selection, String[] selectionArgs, String sortOrder){
+        public static ArrayList<Cliente_CURP> getCurps(Context context, String selection, String[] selectionArgs, String order)
+        {
+            SelectDatabase databaseS = new SelectDatabase(context, selection, selectionArgs, order);
+            ArrayList<Cliente_CURP> curps = new getCurpsDatabase().doInBackground(databaseS);
+            return curps;
+        }
+
+        class SaveDatabase {
+            private Context context;
+
+            public SaveDatabase(Context c){
+                this.context = c;
+            }
+
+            public Context getContext(){
+                return context;
+            }
+
+        }
+
+        private static class SelectDatabase {
+            private Context context;
+            private  String selection;
+            private String[] selectionArgs;
+            private String order;
+
+            public final String ASC = CreateCURP.COLUMN_PERSONA_NOMBRE + "ASC";
+            public final String DESC = CreateCURP.COLUMN_PERSONA_NOMBRE + "DESC";
+
+            public SelectDatabase (Context context) {
+                this.context = context;
+                this.selection = "";
+                String[] x = {};
+                this.selectionArgs = x;
+                this.order = this.ASC;
+            }
+            public SelectDatabase(Context context, String selection, String[] selectionArgs) {
+                this.context = context;
+                this.selection = selection;
+                this.selectionArgs = selectionArgs;
+                this.order = this.ASC;
+            }
+            public SelectDatabase(Context context, String selection, String[] selectionArgs, String order) {
+                this.context = context;
+                this.selection = selection;
+                this.selectionArgs = selectionArgs;
+                this.order = order;
+            }
+
+            public Context getContext() {
+                return context;
+            }
+
+            public String getSelection() {
+                return selection;
+            }
+
+            public String[] getSelectionArgs() {
+                return selectionArgs;
+            }
+
+            public String getOrder() {
+                return order;
+            }
+        }
+
+        private class SaveDAtabase extends AsyncTask<SaveDatabase, Void, Void> {
+            @Override
+            protected  Void doInBackground(SaveDatabase... saveDatabases){
+                Context context = saveDatabases[0].getContext();
+                dbCurpHelper dbCurphelper = new dbCurpHelper(context);
+                SQLiteDatabase database =dbCurphelper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                Values.put
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             dbCurpHelper dbCurphelper = new dbCurpHelper(context);
             SQLiteDatabase database = dbCurpHelper.getWriteDatabase();
 
